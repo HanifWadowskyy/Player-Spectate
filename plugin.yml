@@ -1,0 +1,19 @@
+name: Simple_Spectate
+main: CJMustard1452\Spectate\main
+description: Simple Spectation Plugin
+api: 4.0.2
+version: 1.0.0
+author: CJMustard1452
+
+commands:
+  spectate:
+    description: Allowes to spectate players
+    aliases:
+      - watch
+      - spec
+    permission: spectator.commoncommand
+
+permissions:
+  spectator.commoncommand:
+    default: op
+    description: Simple_Spectate Perms
