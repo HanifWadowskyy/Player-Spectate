@@ -53,9 +53,7 @@ Class main extends PluginBase implements Listener{
 	public function onJoin(PlayerJoinEvent $event){
 		$Username = $event->getPlayer()->getName();
 		$usrfile = $this->myConfig = new Config($this->getDataFolder() . "$Username", Config::YAML);
-		if ($usrfile->get("Watching" == false)){
-			return true;
-		}else{
+		if ($usrfile->get("Watching" == true)){
 			$usrfile->set("Watching", false);
 			$usrfile->set("WatchedPlayer", null);
 			$usrfile->save();
@@ -67,7 +65,20 @@ Class main extends PluginBase implements Listener{
 public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
 	$Username = $sender->getName();
 	$Usrfile = $this->myConfig = new Config($this->getDataFolder() . "$Username", Config::YAML);
-	if($Usrfile->get("Watching") == false){
+	if($Usrfile->get("Watching") == true){
+		$ChoosenPlayer = $Usrfile->get("WatchedPlayer");
+		$ChoosenPlayerFile = $this->myConfig = new Config($this->getDataFolder() . "$ChoosenPlayer", Config::YAML);
+		$Usrfile->set("Watching", false);
+		$Usrfile->set("WatchedPlayer", null);
+		$ChoosenPlayerFile->set("Watcher", null);
+		$ChoosenPlayerFile->set("BeingWatched", false);
+		$ChoosenPlayerFile->save();
+		$Usrfile->save();
+		$sender->sendMessage("§7(§cSS§7) §bYou are no longer spectating");
+		$sender->setGamemode($this->getServer()->getGamemode());
+		$sender->teleport($sender->getSpawn());
+		$sender->setSpawn($this->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+	}else{
 		if(isset($args[0])){
 			if($this->getServer()->getPlayerExact($args[0]) == true){
 				if($this->getServer()->getPlayerExact($args[0]) == $sender){
@@ -92,19 +103,6 @@ public function onCommand(CommandSender $sender, Command $command, string $label
 		}else{
 			$sender->sendMessage("§7(§cSS§7) §bPlease enter a username");
 		}
-	}else{
-		$ChoosenPlayer = $Usrfile->get("WatchedPlayer");
-		$ChoosenPlayerFile = $this->myConfig = new Config($this->getDataFolder() . "$ChoosenPlayer", Config::YAML);
-		$Usrfile->set("Watching", false);
-		$Usrfile->set("WatchedPlayer", null);
-		$ChoosenPlayerFile->set("Watcher", null);
-		$ChoosenPlayerFile->set("BeingWatched", false);
-		$ChoosenPlayerFile->save();
-		$Usrfile->save();
-		$sender->sendMessage("§7(§cSS§7) §bYou are no longer spectating");
-		$sender->setGamemode($this->getServer()->getGamemode());
-		$sender->teleport($sender->getSpawn());
-		$sender->setSpawn($this->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 	}
 	return true;
 }
